@@ -10,10 +10,14 @@ const fromSymbol = args[0]
 const toSymbol = args[1]
 
 // make HTTP request
-const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${fromSymbol}&tsyms=${toSymbol}`
+const url = `https://min-api.cryptocompare.com/data/pricemultifull`
 console.log(`HTTP GET Request to ${url}`)
 const cryptoCompareRequest = Functions.makeHttpRequest({
   url: url,
+  params: {
+    fsyms: fromSymbol,
+    tsyms: toSymbol,
+  },
 })
 
 // Execute the API request (Promise)
@@ -29,16 +33,7 @@ if (data.Response === "Error") {
   throw Error(`Functional error. Read message: ${data.Message}`)
 }
 
-const { PRICE: price, VOLUME24HOUR: volume, LASTMARKET: lastMarket } = data["RAW"][fromSymbol][toSymbol]
-console.log(
-  `${fromSymbol} price is: ${price.toFixed(2)} ${toSymbol}. 24h Volume is ${volume.toFixed(
-    2
-  )} ${toSymbol}. Market: ${lastMarket}`
-)
+const price = data["RAW"][fromSymbol][toSymbol]["PRICE"]
+console.log(`${fromSymbol} price is: ${price.toFixed(2)} ${toSymbol}`)
 
-const result = {
-  price: Math.round(price * 100),
-  volume: Math.round(volume * 100),
-  lastMarket,
-}
-return Buffer.from(JSON.stringify(result))
+return Functions.encodeUint256(Math.round(price * 100))

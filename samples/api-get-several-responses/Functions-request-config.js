@@ -14,7 +14,7 @@ const requestConfig = {
   // code language (only JavaScript is currently supported)
   codeLanguage: CodeLanguage.JavaScript,
   // string containing the source code to be executed
-  source: fs.readFileSync(path.resolve(__dirname, "Functions-request-source-open-api.js")).toString(),
+  source: fs.readFileSync(path.resolve(__dirname, "Functions-request-source.js")).toString(),
   // number of HTTP queries the source code is allowed to make
   numAllowedQueries: 1,
   // args can be accessed within the source code with `args[index]` (ie: args[0])
@@ -22,7 +22,7 @@ const requestConfig = {
   // maximum size of a response in bytes
   maxResponseBytes: 256,
   // expected type of the returned value
-  // expectedReturnType: ReturnType.string,
+  expectedReturnType: ReturnType.string,
 }
 
 module.exports = requestConfig
