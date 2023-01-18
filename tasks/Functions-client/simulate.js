@@ -106,11 +106,7 @@ task("functions-simulate", "Simulates an end-to-end fulfillment locally for the 
       }
 
       // Listen for the OCRResponse event & log the simulated response returned to the client contract
-<<<<<<< HEAD
       client.on("OCRResponse", async (eventRequestId, result, err) => {
-=======
-      client.on("OCRResponse", async (requestId, result, err) => {
->>>>>>> 16d2b8e (multivariable example)
         console.log("__Simulated On-Chain Response__")
         if (eventRequestId !== requestId) {
           throw new Error(`${eventRequestId} is not equal to ${requestId}`)
