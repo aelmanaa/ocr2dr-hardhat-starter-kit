@@ -28,7 +28,11 @@ const latestLaunchRequest = Functions.makeHttpRequest({
 // Execute the API request (Promise)
 const latestLaunchResponse = await latestLaunchRequest
 if (latestLaunchResponse.error) {
-  console.error(latestLaunchResponse.error)
+  console.error(
+    latestLaunchResponse.response
+      ? `${latestLaunchResponse.response.status},${latestLaunchResponse.response.statusText}`
+      : ""
+  )
   throw Error("Request failed")
 }
 
