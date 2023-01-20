@@ -19,6 +19,8 @@ const requestConfig = {
   numAllowedQueries: 1,
   // maximum size of a response in bytes
   maxResponseBytes: 256,
+  // args can be accessed within the source code with `args[index]` (ie: args[0])
+  args: ["JP"],
   // expected type of the returned value
   expectedReturnType: ReturnType.string,
 }

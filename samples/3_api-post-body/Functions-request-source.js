@@ -1,48 +1,47 @@
 // No authentication. demonstrate POST with data in body
-// call an open graphql api: https://api.spacex.land/graphql/
+// callgraphql api: https://github.com/trevorblades/countries
+// docs: https://trevorblades.github.io/countries/queries/continent
 
 // make HTTP request
-const url = "https://api.spacex.land/graphql/"
+const countryCode = args[0]
+const url = "https://countries.trevorblades.com/"
+console.log(`Get name, capital and currency for country code: ${countryCode}`)
 console.log(`HTTP POST Request to ${url}`)
-const latestLaunchRequest = Functions.makeHttpRequest({
+const countryRequest = Functions.makeHttpRequest({
   url: url,
   method: "POST",
   data: {
-    query:
-      "{ \
-        launchLatest \
-        {     \
-          id  \
-          launch_date_utc \
-          launch_success \
-          launch_site \
-          {     \
-            site_name_long    \
-          }   \
-          mission_name  \
+    query: `{\
+        country(code: "${countryCode}") { \
+          name \
+          capital \
+          currency \
         } \
-      }",
+      }`,
   },
 })
 
 // Execute the API request (Promise)
-const latestLaunchResponse = await latestLaunchRequest
-if (latestLaunchResponse.error) {
+const countryResponse = await countryRequest
+if (countryResponse.error) {
   console.error(
-    latestLaunchResponse.response
-      ? `${latestLaunchResponse.response.status},${latestLaunchResponse.response.statusText}`
-      : ""
+    countryResponse.response ? `${countryResponse.response.status},${countryResponse.response.statusText}` : ""
   )
   throw Error("Request failed")
 }
 
-const launchLatest = latestLaunchResponse["data"]["data"]["launchLatest"]
+const countryData = countryResponse["data"]["data"]
 
-console.log("latest launch response", launchLatest)
+if (!countryData || !countryData.country) {
+  throw Error(`Make sure the country code "${countryCode}" exists`)
+}
+
+console.log("country response", countryData)
 
 const result = {
-  date: launchLatest.launch_date_utc,
-  success: launchLatest.launch_success,
+  name: countryData.country.name,
+  capital: countryData.country.capital,
+  currency: countryData.country.currency,
 }
 
 return Buffer.from(JSON.stringify(result))
