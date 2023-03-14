@@ -6,7 +6,7 @@ import "https://raw.githubusercontent.com/aelmanaa/ocr2dr-hardhat-starter-kit/re
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
 /**
- * @title Functions Copns contract
+ * @title Functions Consumer contract
  * @notice This contract is a demonstration of using Functions.
  * @notice NOT FOR PRODUCTION USE
  */
@@ -28,10 +28,14 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
 
   /**
    * @notice Send a simple request
+   *
    * @param source JavaScript source code
    * @param secrets Encrypted secrets payload
+   * @param secretsLocation Location of encrypted secrets (0 for inline, 1 for remote)
    * @param args List of arguments accessible from within the source code
-   * @param subscriptionId Billing ID
+   * @param subscriptionId Funtions billing subscription ID
+   * @param gasLimit Maximum amount of gas used to call the client contract's `handleOracleFulfillment` function
+   * @return Functions request ID
    */
   function executeRequest(
     string calldata source,
@@ -52,7 +56,7 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
     }
     if (args.length > 0) req.addArgs(args);
 
-    bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit, tx.gasprice);
+    bytes32 assignedReqID = sendRequest(req, subscriptionId, gasLimit);
     latestRequestId = assignedReqID;
     return assignedReqID;
   }
@@ -66,12 +70,16 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
    * Either response or error parameter will be set, but never both
    */
   function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
-    // revert('test');
     latestResponse = response;
     latestError = err;
     emit OCRResponse(requestId, response, err);
   }
 
+  /**
+   * @notice Allows the Functions oracle address to be updated
+   *
+   * @param oracle New oracle address
+   */
   function updateOracleAddress(address oracle) public onlyOwner {
     setOracle(oracle);
   }
